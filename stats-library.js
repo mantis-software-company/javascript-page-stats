@@ -1,27 +1,28 @@
-class Statistics {
-  constructor() {
-    this.statictics = {};
-    let scriptObj = document.querySelector('script[component]');
-    this.timeOut = parseInt(scriptObj.getAttribute("timeOutRate")) || 3;
-    this.statictics["browser"] = navigator.userAgent;
-    this.statictics["screenSize"] = "" + screen.width + "*" + screen.height;
-    this.statictics["Language"] = navigator.language;
-    this.statictics["authorizationToken"] = this.getCookie("Authorization");
-    this.statictics["url"] = window.location.href;
-    document.onreadystatechange = function (event) {
-      if (document.readyState === "interactive") {
-        this.statictics["documentCompleteTime"] = event.timeStamp;
-      }
-    }.bind(this);
+(function(){
+  class Statistics {
+    constructor() {
+      this.statictics = {};
+      let scriptObj = document.querySelector('script[component]');
+      this.timeOut = parseInt(scriptObj.getAttribute("timeOutRate")) || 3;
+      this.statictics["browser"] = navigator.userAgent;
+      this.statictics["screenSize"] = "" + screen.width + "*" + screen.height;
+      this.statictics["language"] = navigator.language;
+      this.statictics["authorizationToken"] = this.getCookie("Authorization");
+      this.statictics["url"] = window.location.href;
+      document.onreadystatechange = function (event) {
+        if (document.readyState === "interactive") {
+          this.statictics["documentCompleteTime"] = event.timeStamp;
+        }
+      }.bind(this);
 
-    window.onload = function (event) {
-      this.statictics["windowOnLoadTime"] = event.timeStamp;
-      if (!localStorage.getItem(window.location.href) || (new Date().getTime() - parseInt(localStorage.getItem(window.location.href)) > (3600000 * this.timeOut))) {
-        this.sendData();
-        localStorage.setItem(window.location.href, (new Date().getTime() + (this.timeOut * 3600000)).toString());
-      }
-    }.bind(this);
-  }
+      window.onload = function (event) {
+        this.statictics["windowOnLoadTime"] = event.timeStamp;
+        if (!localStorage.getItem(window.location.href) || (new Date().getTime() - parseInt(localStorage.getItem(window.location.href)) > (3600000 * this.timeOut))) {
+          this.sendData();
+          localStorage.setItem(window.location.href, (new Date().getTime() + (this.timeOut * 3600000)).toString());
+        }
+      }.bind(this);
+    }
 
 
     sendData()
@@ -30,12 +31,6 @@ class Statistics {
       var url = "https://stats.trdizin.gov.tr";
       xhr.open("POST", url, true);
       xhr.setRequestHeader("Content-Type", "application/json");
-      xhr.onreadystatechange = function () {
-        if (xhr.readyState === 4 && xhr.status === 200) {
-          var res = xhr.responseText
-          console.log("stat sonucu: ", res);
-        }
-      };
       var data = JSON.stringify(this.statictics);
       xhr.send(data);
     }
@@ -55,10 +50,7 @@ class Statistics {
       }
       return null;
     }
-}
+  }
 
-new Statistics();
-
-
-
-
+  new Statistics();
+})();
